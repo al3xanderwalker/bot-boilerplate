@@ -19,7 +19,7 @@ const commands = requireAll({
 client.commands = new Map();
 for (const name in commands) {
   const cmd = commands[name];
-  client.commands.set(cmd.config.name, cmd);
-  console.log(`Command loaded: ${cmd.config.name}`);
+  client.commands.set(name, cmd);
+  console.log(`Command loaded: ${name}`);
 }
 client.login(config.token);
