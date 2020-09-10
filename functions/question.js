@@ -1,24 +1,20 @@
-module.exports = async (msg) => {
-  const embed = require.main.require("./functions/embed.js");
+module.exports = async (sent, msg, deleteMsg) => {
+  const embed = require.main.require('./functions/embed.js');
   const filter = (m) => m.author.id === msg.author.id;
-  let promise = new Promise((res, rej) => {
-    msg.channel
-      .awaitMessages(filter, {
-        max: 1,
-        time: 5000,
-      })
-      .then((collected) => {
-        collected.first().delete();
-        if (collected.first().content.toUpperCase() == "CANCEL") {
-          msg.edit(embed("Error", "User cancelled this action"));
-          res(null);
-        } else res(collected.first().content);
-      })
-      .catch((err) => {
-        msg.edit(embed("Error", "User did not respond within 60 seconds"));
-        res(null);
-      });
-  });
-
-  return await promise;
+  return await msg.channel
+    .awaitMessages(filter, {
+      max: 1,
+      time: 5000,
+    })
+    .then((collected) => {
+      if (deleteMsg) collected.first().delete();
+      if (collected.first().content.toUpperCase() == 'CANCEL') {
+        sent.edit(embed('Error', 'User cancelled this action'));
+        return;
+      } else return collected.first().content;
+    })
+    .catch((err) => {
+      sent.edit(embed('Error', 'User did not respond within 60 seconds'));
+      return;
+    });
 };
